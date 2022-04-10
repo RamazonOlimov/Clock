@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<meta charset = "utf-8">
+		<title>Clock</title>
+		
+		<style>
+			@import url('https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800,900&display=swap');
+
+			*{
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+				font-family: 'Poppins', sans-serif;
+			}
+
+			body
+			{
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				min-height: 100vh;
+				background: #2f363e;
+			}
+
+			.container
+			{
+				position: relative;
+				background: #2f363e;
+				/*min-height: 500px;*/
+				border-radius: 20px;
+				border-top-right-radius: 225px;
+				border-top-left-radius: 225px;
+				box-shadow: 25px 25px 75px rgba(0,0,0,0.75),
+				10px 50px 70px rgba(0,0,0,0.25),
+				inset 5px 5px 10px rgba(0,0,0,0.5), 
+				inset 5px 5px 20px rgba(255,255,255,0.2), 
+				inset -5px -5px 15px rgba(0,0,0,0.75);
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				flex-direction: column;
+			}
+
+			.clock
+			{
+				position: relative;
+				width: 450px;
+				height: 450px;
+				background: #2f363e;
+				border-radius: 50%;
+				box-shadow: 10px 50px 70px rgba(0,0,0,0.25),
+				inset 5px 5px 10px rgba(0,0,0,0.5), 
+				inset 5px 5px 20px rgba(255,255,255,0.2), 
+				inset -5px -5px 15px rgba(0,0,0,0.75);
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				margin-bottom: 30px;
+			}
+
+			.clock::before
+			{
+				content: '';
+				position: absolute;
+				width: 8px;
+				height: 8px;
+				background: #2f363e;
+				border: 3px solid #fff;
+				border-radius: 50%;
+				z-index: 1000000;
+			}
+
+			.clock span
+			{
+				position: absolute;
+				inset: 20px;
+				color: #fff;
+				text-align: center;
+				transform: rotate(calc(var(--i) * 30deg));
+			}
+
+			.clock span b
+			{
+				font-size: 2em;
+				opacity: 0.25;
+				font-wieght: 600;
+				display: inline-block;
+				transform: rotate(calc(var(--i) * -30deg));
+			}
+			
+			.k1 span
+			{
+			    position: absolute;
+			    inset: 30px;
+			    color: rgb(28, 255, 255);
+			    margin-bottom: 20px;
+			    text-align: center;
+			    transform: rotate(calc(var(--k) * 6deg));
+			}
+			
+			.k1 span b 
+			{
+			    font-size: 2.5em;
+				opacity: 0.2;
+				font-weight: 600;
+				display: inline-block;
+				transform: rotate(calc(var(--k) * -6deg));
+			}
+
+			.circle
+			{
+				position: absolute;
+				width: 300px;
+				height: 300px;
+				border: 0.5px solid rgba(0,0,0,0.25);
+				border-radius: 50%;
+				display: flex;
+				justify-content: center;
+				align-items: flex-start;
+				z-index: 10;
+			}
+
+			.circle2
+			{
+				width: 240px;
+				height: 240px;
+				z-index: 9;
+			}
+
+			.circle3
+			{
+				width: 180px;
+				height: 180px;
+				z-index: 8;
+			}
+
+			.circle i
+			{
+				position: absolute;
+				width: 6px;
+				height: 50%;
+				background: var(--clr);
+				opacity: 0.75;
+				transform-origin: bottom;
+				transform: scaleY(0.5);
+			}
+
+			.circle:nth-child(1) i
+			{
+				width: 2px;
+			}
+
+			.circle:nth-child(2) i
+			{
+				width: 6px;
+			}
+
+			.circle:nth-child(3) i
+			{
+				width: 6px;
+			}
+
+			.circle::before
+			{
+				content: '';
+				position: absolute;
+				top: -8.5px;
+				width: 15px;
+				height: 15px;
+				border-radius: 50%;
+				background: var(--clr);
+				box-shadow: 0 0 20px var(--clr),
+				0 0 60px var(--clr);
+			}
+
+			/* digital clock */
+
+			#time
+			{
+				margin-bottom: 40px;
+				display: flex;
+				padding: 10px 20px;
+				font-size: 2em;
+				font-weight: 600;
+				border: 2px solid rgba(0, 0, 0, 0.5);
+				border-radius: 40px;
+				box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5),
+				inset 5px 5px 20px rgba(255, 255, 255, 0.2),
+				inset -5px -5px 15px rgba(0, 0, 0, 0.75);
+			}
+
+			#time div
+			{
+				position: relative;
+				width: 60px;
+				text-align: center;
+				font-weight: 500;
+				color: var(--clr);
+			}
+
+			#time div:nth-child(1)::after,
+			#time div:nth-child(2)::after
+			{
+				content: ':';
+				position: absolute;
+				right: -4px;
+			}
+
+			#time div:last-child
+			{
+				font-size: 0.5em;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				color: #fff;
+			}
+
+			#time div:nth-child(2)::after
+			{
+				animation: animate 1s steps(1) infinite;
+			}
+
+			@keyframes animate
+			{
+				0%
+				{
+					opacity: 1;
+				}
+				50%
+				{
+					opacity: 0;
+				}
+			}
+			
+			.k1 span:nth-child(5),
+			.k1 span:nth-child(10),
+			.k1 span:nth-child(15),
+			.k1 span:nth-child(20),
+			.k1 span:nth-child(25),
+			.k1 span:nth-child(30),
+			.k1 span:nth-child(35),
+			.k1 span:nth-child(40),
+			.k1 span:nth-child(45),
+			.k1 span:nth-child(50),
+			.k1 span:nth-child(55),
+			.k1 span:last-child
+			{
+			    opacity: 2.0;
+			    color: rgb(250,200,250);
+			    text-shadow: 0 0 5px #fff,
+			    0 0 10px #fff;
+			}
+			
+		</style>
+	</head>
+	
+	<body>
+		<div class = "container">
+			<div class = "clock">
+				<div class = "circle" id="sc" style= "--clr: #04fc43;"><i></i></div>
+				<div class = "circle circle2" id="mn" style= "--clr: #fee800;"><i></i></div>
+				<div class = "circle circle3" id="hr" style= "--clr: #ff2572;"><i></i></div>
+
+				<a class="k1" >
+				<span style="--k:1;"><b>.</b></span>
+				<span style="--k:2;"><b>.</b></span>
+				<span style="--k:3;"><b>.</b></span>
+				<span style="--k:4;"><b>.</b></span>
+				<span style="--k:5;"><b>.</b></span>
+				<span style="--k:6;"><b>.</b></span>
+				<span style="--k:7;"><b>.</b></span>
+				<span style="--k:8;"><b>.</b></span>
+				<span style="--k:9;"><b>.</b></span>
+				<span style="--k:10;"><b>.</b></span>
+				<span style="--k:11;"><b>.</b></span>
+				<span style="--k:12;"><b>.</b></span>
+				<span style="--k:13;"><b>.</b></span>
+				<span style="--k:14;"><b>.</b></span>
+				<span style="--k:15;"><b>.</b></span>
+				<span style="--k:16;"><b>.</b></span>
+				<span style="--k:17;"><b>.</b></span>
+				<span style="--k:18;"><b>.</b></span>
+				<span style="--k:19;"><b>.</b></span>
+				<span style="--k:20;"><b>.</b></span>
+				<span style="--k:21;"><b>.</b></span>
+				<span style="--k:22;"><b>.</b></span>
+				<span style="--k:23;"><b>.</b></span>
+				<span style="--k:24;"><b>.</b></span>
+				<span style="--k:25;"><b>.</b></span>
+				<span style="--k:26;"><b>.</b></span>
+				<span style="--k:27;"><b>.</b></span>
+				<span style="--k:28;"><b>.</b></span>
+				<span style="--k:29;"><b>.</b></span>
+				<span style="--k:30;"><b>.</b></span>
+				<span style="--k:31;"><b>.</b></span>
+				<span style="--k:32;"><b>.</b></span>
+				<span style="--k:33;"><b>.</b></span>
+				<span style="--k:34;"><b>.</b></span>
+				<span style="--k:35;"><b>.</b></span>
+				<span style="--k:36;"><b>.</b></span>
+				<span style="--k:37;"><b>.</b></span>
+				<span style="--k:38;"><b>.</b></span>
+				<span style="--k:39;"><b>.</b></span>
+				<span style="--k:40;"><b>.</b></span>
+				<span style="--k:41;"><b>.</b></span>
+				<span style="--k:42;"><b>.</b></span>
+				<span style="--k:43;"><b>.</b></span>
+				<span style="--k:44;"><b>.</b></span>
+				<span style="--k:45;"><b>.</b></span>
+				<span style="--k:46;"><b>.</b></span>
+				<span style="--k:47;"><b>.</b></span>
+				<span style="--k:48;"><b>.</b></span>
+				<span style="--k:49;"><b>.</b></span>
+				<span style="--k:50;"><b>.</b></span>
+				<span style="--k:51;"><b>.</b></span>
+				<span style="--k:52;"><b>.</b></span>
+				<span style="--k:53;"><b>.</b></span>
+				<span style="--k:54;"><b>.</b></span>
+				<span style="--k:55;"><b>.</b></span>
+				<span style="--k:56;"><b>.</b></span>
+				<span style="--k:57;"><b>.</b></span>
+				<span style="--k:58;"><b>.</b></span>
+				<span style="--k:59;"><b>.</b></span>
+				<span style="--k:60;"><b>.</b></b></span>
+				</a>
+
+				<span style="--i:1;"><b>1</b></span>
+				<span style="--i:2;"><b>2</b></span>
+				<span style="--i:3;"><b>3</b></span>
+				<span style="--i:4;"><b>4</b></span>
+				<span style="--i:5;"><b>5</b></span>
+				<span style="--i:6;"><b>6</b></span>
+				<span style="--i:7;"><b>7</b></span>
+				<span style="--i:8;"><b>8</b></span>
+				<span style="--i:9;"><b>9</b></span>
+				<span style="--i:10;"><b>10</b></span>
+				<span style="--i:11;"><b>11</b></span>
+				<span style="--i:12;"><b>12</b></span>
+				
+			</div>
+
+			<!-- digital clock -->
+			<div id = "time">
+				<div id = "hours" style= "--clr: #ff2572;">00</div>
+				<div id = "minutes" style= "--clr: #fee800;">00</div>
+				<div id = "seconds" style= "--clr: #ff2572;">00</div>
+				<div id = "ampm">AM</div>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+			let hr = document.querySelector('#hr');
+			let mn = document.querySelector('#mn');
+			let sc = document.querySelector('#sc');
+
+			setInterval(() => {
+				let day = new Date();
+				let hh = day.getHours() * 30;
+				let mm = day.getMinutes() * 6;
+				let ss = day.getSeconds() * 6;
+
+				hr.style.transform = `rotateZ(${hh + (mm / 12)}deg)`;
+				mn.style.transform = `rotateZ(${mm}deg)`;
+				sc.style.transform = `rotateZ(${ss}deg)`;
+
+				//digital clock
+				let hours = document.getElementById('hours');
+				let minutes = document.getElementById('minutes');
+				let seconds = document.getElementById('seconds');
+				let ampm = document.getElementById('ampm');
+				
+				let h = new Date().getHours();
+				let m = new Date().getMinutes();
+				let s = new Date().getSeconds();
+
+				let am = (h < 12) ? "AM" : "PM";
+				
+				//convert 24hr clock to 12hr clock
+				if(h > 12){
+					h = h - 12;
+				}
+
+				//add zero before single digit number
+				h = (h < 10) ? "0" + h : h;
+				m = (m < 10) ? "0" + m : m;
+				s = (s < 10) ? "0" + s : s;
+				
+				hours.innerHTML = h;
+				minutes.innerHTML = m;
+				seconds.innerHTML = s;
+				ampm.innerHTML = am;
+			});
+		</script>
+	</body>
+</html>
